@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 type ContactRequest = {
@@ -124,76 +124,157 @@ function Chat() {
   }
 
   if (loading) {
-    return <div style={{ padding: "40px" }}>Loading chat...</div>;
+    return (
+      <div className="chat-page">
+        <div className="chat-center-loading">
+          Loading your conversation...
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>
-        <h1>LostLink Chat</h1>
-        <p>❌ {error}</p>
+      <div className="chat-page">
+        <div className="chat-error-card">
+          <Link to="/chat" className="chat-back-link">
+            ← Back to Messages
+          </Link>
+
+          <div className="chat-error-icon">
+            ⚠️
+          </div>
+
+          <h1>Unable to open chat</h1>
+
+          <p>{error}</p>
+
+          <Link to="/chat" className="chat-error-button">
+            Back to Messages
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>
-      <h1>LostLink Chat</h1>
+    <div className="chat-page">
 
-      <p>🔒 Secure conversation</p>
+      {/* HEADER */}
 
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "16px",
-          padding: "20px",
-          minHeight: "300px",
-          marginTop: "20px",
-        }}
-      >
-        {messages.length === 0 ? (
-          <p>No messages yet. Start the conversation.</p>
-        ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              style={{
-                textAlign: msg.sender_id === userId ? "right" : "left",
-                marginBottom: "12px",
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  padding: "10px 14px",
-                  borderRadius: "12px",
-                  border: "1px solid #ddd",
-                  maxWidth: "75%",
-                }}
-              >
-                {msg.message}
-              </span>
+      <div className="chat-page-header">
+
+        <Link
+          to="/chat"
+          className="chat-back-link"
+        >
+          ← Back to Messages
+        </Link>
+
+        <div className="chat-title-row">
+          <div>
+            <h1>LostLink Chat</h1>
+
+            <p>
+              🔒 Secure conversation
+            </p>
+          </div>
+
+          <div className="chat-status">
+            ● Connected
+          </div>
+        </div>
+
+      </div>
+
+      {/* CHAT */}
+
+      <div className="chat-container">
+
+        <div className="chat-messages">
+
+          {messages.length === 0 ? (
+            <div className="empty-chat-messages">
+              <div className="empty-chat-message-icon">
+                💬
+              </div>
+
+              <h2>Start the conversation</h2>
+
+              <p>
+                Send a message to discuss the matched item.
+              </p>
             </div>
-          ))
-        )}
-      </div>
+          ) : (
+            messages.map((msg) => {
+              const isMine = msg.sender_id === userId;
 
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              sendMessage();
+              return (
+                <div
+                  key={msg.id}
+                  className={
+                    isMine
+                      ? "chat-message-wrapper sent"
+                      : "chat-message-wrapper received"
+                  }
+                >
+                  <div
+                    className={
+                      isMine
+                        ? "chat-message sent"
+                        : "chat-message received"
+                    }
+                  >
+                    <span>
+                      {msg.message}
+                    </span>
+
+                    <small className="chat-message-time">
+                      {new Date(
+                        msg.created_at
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </small>
+                  </div>
+                </div>
+              );
+            })
+          )}
+
+        </div>
+
+        {/* INPUT */}
+
+        <div className="chat-input-area">
+
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) =>
+              setNewMessage(e.target.value)
             }
-          }}
-          placeholder="Type your message..."
-          style={{ flex: 1, padding: "12px" }}
-        />
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+            placeholder="Type your message..."
+          />
 
-        <button onClick={sendMessage}>Send</button>
+          <button
+            className="chat-send-button"
+            onClick={sendMessage}
+            disabled={!newMessage.trim()}
+          >
+            Send
+          </button>
+
+        </div>
+
       </div>
+
     </div>
   );
 }

@@ -109,3 +109,13 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+/* LANDING PAGE - NO RIGHT CARD */
+
+.hero {
+  grid-template-columns: 1fr;
+  max-width: 900px;
+}
+
+.hero-content {
+  max-width: 780px;
+}

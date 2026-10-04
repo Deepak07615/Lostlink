@@ -1,30 +1,20 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-function Signup() {
-  const navigate = useNavigate();
-
-  const [name, setName] = useState("");
+function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setMessage("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
-        },
-      },
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
     });
 
     if (error) {
@@ -33,11 +23,11 @@ function Signup() {
       return;
     }
 
-    setMessage("✅ Account created successfully!");
+    setMessage(
+      "✅ Password reset link has been sent to your email."
+    );
 
-    setTimeout(() => {
-      navigate("/login", { replace: true });
-    }, 900);
+    setLoading(false);
   };
 
   return (
@@ -107,7 +97,6 @@ function Signup() {
             boxShadow: "0 20px 60px rgba(34, 47, 78, 0.08)",
           }}
         >
-          {/* HEADER */}
           <div
             style={{
               textAlign: "center",
@@ -123,7 +112,7 @@ function Signup() {
                 color: "#172033",
               }}
             >
-              Create your account
+              Forgot Password?
             </h1>
 
             <p
@@ -134,58 +123,18 @@ function Signup() {
                 lineHeight: 1.6,
               }}
             >
-              Join LostLink and start reconnecting lost items with their owners.
+              Enter your email and we'll send you a link to reset
+              your password.
             </p>
           </div>
 
-          {/* FORM */}
-          <form onSubmit={handleSignup}>
-            {/* FULL NAME */}
+          <form onSubmit={handleReset}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
-                marginBottom: "18px",
-              }}
-            >
-              <label
-                style={{
-                  color: "#344054",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                }}
-              >
-                Full Name
-              </label>
-
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "13px 14px",
-                  border: "1px solid #dce3ed",
-                  borderRadius: "10px",
-                  background: "#fbfcfe",
-                  color: "#172033",
-                  fontSize: "14px",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-
-            {/* EMAIL */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                marginBottom: "18px",
+                marginBottom: "24px",
               }}
             >
               <label
@@ -218,56 +167,6 @@ function Signup() {
               />
             </div>
 
-            {/* PASSWORD */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                marginBottom: "24px",
-              }}
-            >
-              <label
-                style={{
-                  color: "#344054",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                }}
-              >
-                Password
-              </label>
-
-              <input
-                type="password"
-                placeholder="Create a password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "13px 14px",
-                  border: "1px solid #dce3ed",
-                  borderRadius: "10px",
-                  background: "#fbfcfe",
-                  color: "#172033",
-                  fontSize: "14px",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
-              />
-
-              <span
-                style={{
-                  color: "#8a94a6",
-                  fontSize: "11px",
-                }}
-              >
-                Password must contain at least 6 characters.
-              </span>
-            </div>
-
-            {/* CREATE ACCOUNT */}
             <button
               type="submit"
               disabled={loading}
@@ -286,11 +185,10 @@ function Signup() {
                 boxShadow: "0 10px 24px rgba(82, 103, 255, 0.20)",
               }}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
 
-          {/* MESSAGE */}
           {message && (
             <div
               style={{
@@ -314,18 +212,15 @@ function Signup() {
             </div>
           )}
 
-          {/* LOGIN LINK */}
           <div
             style={{
               marginTop: "25px",
               paddingTop: "22px",
               borderTop: "1px solid #edf0f5",
               textAlign: "center",
-              color: "#718096",
               fontSize: "13px",
             }}
           >
-            Already have an account?{" "}
             <Link
               to="/login"
               style={{
@@ -334,12 +229,11 @@ function Signup() {
                 textDecoration: "none",
               }}
             >
-              Sign In
+              ← Back to Login
             </Link>
           </div>
         </div>
 
-        {/* BACK TO LANDING */}
         <div
           style={{
             textAlign: "center",
@@ -362,4 +256,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default ForgotPassword;

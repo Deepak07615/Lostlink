@@ -108,116 +108,192 @@ function ReportFound() {
   };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>
-      <h1>Report a Found Item</h1>
+    <div className="report-page">
+      <div className="report-header">
+        <div className="report-eyebrow">FOUND ITEM REPORT</div>
 
-      <p>
-        Tell us about the item you found so LostLink can look for its owner.
-      </p>
+        <h1>Report a Found Item</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "16px" }}>
-          <label>Item Name</label>
-
-          <input
-            name="itemName"
-            type="text"
-            placeholder="Black Backpack"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <label>Category</label>
-
-          <select
-            name="category"
-            required
-            defaultValue=""
-            style={{ width: "100%", padding: "12px" }}
-          >
-            <option value="" disabled>
-              Select category
-            </option>
-
-            <option>Electronics</option>
-            <option>Wallet / Purse</option>
-            <option>Bag</option>
-            <option>Documents</option>
-            <option>Keys</option>
-            <option>Clothing</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <label>Description</label>
-
-          <textarea
-            name="description"
-            placeholder="Describe the item and unique marks..."
-            rows={5}
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <label>Where did you find it?</label>
-
-          <input
-            name="location"
-            type="text"
-            placeholder="Central Library"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <label>When did you find it?</label>
-
-          <input
-            name="eventTime"
-            type="datetime-local"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>Upload Item Photo</label>
-
-          <input
-            name="image"
-            type="file"
-            accept="image/*"
-          />
-        </div>
-
-        <button type="submit">
-          Submit Found Item
-        </button>
-      </form>
-
-      {submitted && (
-        <p style={{ marginTop: "20px" }}>
-          ✅ Found item saved successfully.
+        <p>
+          Tell us about the item you found and we'll help connect it with its
+          owner.
         </p>
-      )}
+      </div>
 
-      {matchMessage && (
-        <p style={{ marginTop: "10px" }}>
-          {matchMessage}
-        </p>
-      )}
+      <div className="report-card">
+        <div className="report-card-header">
+          <div className="report-card-icon">🔎</div>
 
-      {error && (
-        <p style={{ marginTop: "10px" }}>
-          ❌ {error}
-        </p>
-      )}
+          <div>
+            <h2>Found Item Details</h2>
+            <p>Provide as much information as possible.</p>
+          </div>
+        </div>
+
+        <form className="report-form" onSubmit={handleSubmit}>
+          <div className="form-field">
+            <label htmlFor="itemName">
+              Item Name <span>*</span>
+            </label>
+
+            <input
+              id="itemName"
+              name="itemName"
+              type="text"
+              placeholder="Example: Black Backpack"
+              required
+            />
+
+            <small>Give the item a simple, recognizable name.</small>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="category">
+              Category <span>*</span>
+            </label>
+
+            <select
+              id="category"
+              name="category"
+              required
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              <option>Electronics</option>
+              <option>Wallet / Purse</option>
+              <option>Bag</option>
+              <option>Documents</option>
+              <option>Keys</option>
+              <option>Clothing</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="description">
+              Description <span>*</span>
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              rows={5}
+              placeholder="Describe the item, colour, brand, unique marks, stickers, scratches, or anything that can help identify it..."
+              required
+            />
+
+            <small>
+              Unique details make matching more accurate.
+            </small>
+          </div>
+
+          <div className="form-row">
+            <div className="form-field">
+              <label htmlFor="location">
+                Where did you find it? <span>*</span>
+              </label>
+
+              <input
+                id="location"
+                name="location"
+                type="text"
+                placeholder="Example: Central Library"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="eventTime">
+                When did you find it? <span>*</span>
+              </label>
+
+              <input
+                id="eventTime"
+                name="eventTime"
+                type="datetime-local"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-field">
+            <label>Item Photo</label>
+
+            <div className="upload-box">
+              <div className="upload-icon">📷</div>
+
+              <div className="upload-text">
+                <strong>Upload a photo of the item</strong>
+                <span>JPG, PNG or other image formats</span>
+              </div>
+
+              <input
+                name="image"
+                type="file"
+                accept="image/*"
+              />
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="submit-report-button"
+            >
+              Submit Found Item
+              <span>→</span>
+            </button>
+
+            <p>Your information will be securely stored in LostLink.</p>
+          </div>
+        </form>
+
+        {submitted && (
+          <div className="success-message">
+            <strong>✓ Found item saved successfully.</strong>
+          </div>
+        )}
+
+        {matchMessage && (
+          <div className="match-result-message">
+            {matchMessage}
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            ❌ {error}
+          </div>
+        )}
+      </div>
+
+      <div className="report-help">
+        <div className="report-help-card">
+          <div>🔎</div>
+          <h3>Smart Matching</h3>
+          <p>
+            LostLink automatically checks your report against lost items.
+          </p>
+        </div>
+
+        <div className="report-help-card">
+          <div>🔒</div>
+          <h3>Private & Secure</h3>
+          <p>
+            Your personal information stays protected during the process.
+          </p>
+        </div>
+
+        <div className="report-help-card">
+          <div>🔔</div>
+          <h3>Get Notified</h3>
+          <p>
+            We'll notify you when a potential match is found.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

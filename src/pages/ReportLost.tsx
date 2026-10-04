@@ -7,7 +7,9 @@ function ReportLost() {
   const [matchMessage, setMatchMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     setSubmitted(false);
@@ -49,31 +51,36 @@ function ReportLost() {
         });
 
       if (uploadError) {
-        setError(`Image upload failed: ${uploadError.message}`);
+        setError(
+          `Image upload failed: ${uploadError.message}`
+        );
         return;
       }
 
       imagePath = filePath;
     }
 
-    const { data: newReport, error: insertError } = await supabase
-      .from("reports")
-      .insert({
-        user_id: user.id,
-        report_type: "lost",
-        item_name: itemName,
-        category,
-        description,
-        location,
-        event_time: new Date(eventTime).toISOString(),
-        image_url: imagePath,
-      })
-      .select()
-      .single();
+    const { data: newReport, error: insertError } =
+      await supabase
+        .from("reports")
+        .insert({
+          user_id: user.id,
+          report_type: "lost",
+          item_name: itemName,
+          category,
+          description,
+          location,
+          event_time: new Date(eventTime).toISOString(),
+          image_url: imagePath,
+        })
+        .select()
+        .single();
 
     if (insertError || !newReport) {
       setError(
-        `Could not save report: ${insertError?.message || "Unknown error"}`
+        `Could not save report: ${
+          insertError?.message || "Unknown error"
+        }`
       );
       return;
     }
@@ -106,114 +113,294 @@ function ReportLost() {
   };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>
-      <h1>Report a Lost Item</h1>
+    <div className="report-page">
 
-      <p>Tell us about the item you lost.</p>
+      {/* HEADER */}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "16px" }}>
-          <label>Item Name</label>
+      <div className="report-header">
+        <div>
+          <span className="report-eyebrow">
+            LOST ITEM
+          </span>
 
-          <input
-            name="itemName"
-            type="text"
-            placeholder="Black Backpack"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
+          <h1>Report a Lost Item</h1>
+
+          <p>
+            Tell us what you lost and we'll help connect
+            you with potential matches.
+          </p>
+        </div>
+      </div>
+
+      {/* FORM CARD */}
+
+      <div className="report-card">
+
+        <div className="report-card-header">
+          <div className="report-card-icon">
+            📍
+          </div>
+
+          <div>
+            <h2>Lost Item Details</h2>
+
+            <p>
+              Provide as much information as possible.
+            </p>
+          </div>
         </div>
 
-        <div style={{ marginBottom: "16px" }}>
-          <label>Category</label>
+        <form
+          onSubmit={handleSubmit}
+          className="report-form"
+        >
 
-          <select
-            name="category"
-            required
-            defaultValue=""
-            style={{ width: "100%", padding: "12px" }}
-          >
-            <option value="" disabled>
-              Select category
-            </option>
+          {/* ITEM NAME */}
 
-            <option>Electronics</option>
-            <option>Wallet / Purse</option>
-            <option>Bag</option>
-            <option>Documents</option>
-            <option>Keys</option>
-            <option>Clothing</option>
-            <option>Other</option>
-          </select>
+          <div className="form-field">
+            <label htmlFor="itemName">
+              Item Name
+              <span>*</span>
+            </label>
+
+            <input
+              id="itemName"
+              name="itemName"
+              type="text"
+              placeholder="Example: Black Backpack"
+              required
+            />
+
+            <small>
+              Give your item a simple, recognizable name.
+            </small>
+          </div>
+
+          {/* CATEGORY */}
+
+          <div className="form-field">
+            <label htmlFor="category">
+              Category
+              <span>*</span>
+            </label>
+
+            <select
+              id="category"
+              name="category"
+              required
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+
+              <option>Electronics</option>
+              <option>Wallet / Purse</option>
+              <option>Bag</option>
+              <option>Documents</option>
+              <option>Keys</option>
+              <option>Clothing</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          {/* DESCRIPTION */}
+
+          <div className="form-field">
+            <label htmlFor="description">
+              Description
+              <span>*</span>
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Describe the item, colour, brand, unique marks, stickers, scratches, or anything that can help identify it..."
+              rows={6}
+              required
+            />
+
+            <small>
+              Unique details make matching more accurate.
+            </small>
+          </div>
+
+          {/* LOCATION */}
+
+          <div className="form-row">
+
+            <div className="form-field">
+              <label htmlFor="location">
+                Where did you lose it?
+                <span>*</span>
+              </label>
+
+              <input
+                id="location"
+                name="location"
+                type="text"
+                placeholder="Example: Central Library"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="eventTime">
+                When did you lose it?
+                <span>*</span>
+              </label>
+
+              <input
+                id="eventTime"
+                name="eventTime"
+                type="datetime-local"
+                required
+              />
+            </div>
+
+          </div>
+
+          {/* IMAGE */}
+
+          <div className="form-field">
+
+            <label htmlFor="image">
+              Item Photo
+            </label>
+
+            <div className="upload-box">
+
+              <div className="upload-icon">
+                📷
+              </div>
+
+              <div>
+                <strong>
+                  Upload a photo of your item
+                </strong>
+
+                <p>
+                  JPG, PNG or other image formats
+                </p>
+              </div>
+
+              <input
+                id="image"
+                name="image"
+                type="file"
+                accept="image/*"
+              />
+
+            </div>
+
+          </div>
+
+          {/* SUBMIT */}
+
+          <div className="form-actions">
+
+            <button
+              type="submit"
+              className="submit-report-button"
+            >
+              Submit Lost Item
+              <span>→</span>
+            </button>
+
+            <p>
+              Your information will be securely stored
+              in LostLink.
+            </p>
+
+          </div>
+
+        </form>
+
+        {/* RESULTS */}
+
+        {submitted && (
+          <div className="success-message">
+            <span>✓</span>
+
+            <div>
+              <strong>
+                Lost item saved successfully.
+              </strong>
+
+              <p>
+                Your report is now active.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {matchMessage && (
+          <div className="match-result-message">
+            {matchMessage}
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            <span>⚠</span>
+
+            <div>
+              <strong>
+                Something went wrong
+              </strong>
+
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      {/* INFORMATION */}
+
+      <div className="report-help">
+
+        <div>
+          <span>🔎</span>
+
+          <div>
+            <strong>Smart Matching</strong>
+
+            <p>
+              LostLink automatically checks your
+              report against found items.
+            </p>
+          </div>
         </div>
 
-        <div style={{ marginBottom: "16px" }}>
-          <label>Description</label>
+        <div>
+          <span>🔒</span>
 
-          <textarea
-            name="description"
-            placeholder="Describe the item and unique marks..."
-            rows={5}
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
+          <div>
+            <strong>Private & Secure</strong>
+
+            <p>
+              Your personal information is protected
+              until contact is approved.
+            </p>
+          </div>
         </div>
 
-        <div style={{ marginBottom: "16px" }}>
-          <label>Where did you lose it?</label>
+        <div>
+          <span>🔔</span>
 
-          <input
-            name="location"
-            type="text"
-            placeholder="Central Library"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
+          <div>
+            <strong>Get Notified</strong>
+
+            <p>
+              We'll notify you when a potential match
+              is found.
+            </p>
+          </div>
         </div>
 
-        <div style={{ marginBottom: "16px" }}>
-          <label>When did you lose it?</label>
+      </div>
 
-          <input
-            name="eventTime"
-            type="datetime-local"
-            required
-            style={{ width: "100%", padding: "12px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>Upload Item Photo</label>
-
-          <input
-            name="image"
-            type="file"
-            accept="image/*"
-          />
-        </div>
-
-        <button type="submit">
-          Submit Lost Item
-        </button>
-      </form>
-
-      {submitted && (
-        <p style={{ marginTop: "20px" }}>
-          ✅ Lost item saved successfully.
-        </p>
-      )}
-
-      {matchMessage && (
-        <p style={{ marginTop: "10px" }}>
-          {matchMessage}
-        </p>
-      )}
-
-      {error && (
-        <p style={{ marginTop: "10px" }}>
-          ❌ {error}
-        </p>
-      )}
     </div>
   );
 }

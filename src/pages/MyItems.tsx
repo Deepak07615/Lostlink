@@ -48,58 +48,109 @@ function MyItems() {
   }
 
   if (loading) {
-    return <div style={{ padding: "40px" }}>Loading your items...</div>;
+    return (
+      <div className="my-items-page">
+        <div className="my-items-loading">
+          Loading your items...
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div style={{ maxWidth: "900px", margin: "40px auto", padding: "20px" }}>
-      <h1>My Items</h1>
-      <p>All your LostLink reports in one place.</p>
+    <div className="my-items-page">
+      <div className="my-items-header">
+        <div>
+          <div className="my-items-eyebrow">YOUR REPORTS</div>
+          <h1>My Items</h1>
+          <p>All your LostLink reports in one place.</p>
+        </div>
 
-      {message && <p>❌ {message}</p>}
+        <div className="my-items-count">
+          <strong>{reports.length}</strong>
+          <span>Total Reports</span>
+        </div>
+      </div>
 
-      {!message && reports.length === 0 && (
-        <p>You haven't reported any items yet.</p>
+      {message && (
+        <div className="my-items-error">
+          ❌ {message}
+        </div>
       )}
 
-      <div style={{ display: "grid", gap: "20px", marginTop: "25px" }}>
-        {reports.map((report) => (
-          <div
-            key={report.id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "16px",
-              padding: "20px",
-            }}
-          >
-            <h2>
-              {report.report_type === "lost" ? "🔴 Lost" : "🟢 Found"} —{" "}
-              {report.item_name}
-            </h2>
+      {!message && reports.length === 0 && (
+        <div className="my-items-empty">
+          <div className="my-items-empty-icon">📦</div>
+          <h2>No reports yet</h2>
+          <p>You haven't reported any lost or found items yet.</p>
+        </div>
+      )}
 
-            <p>
-              <strong>Category:</strong> {report.category}
-            </p>
+      {!message && reports.length > 0 && (
+        <div className="my-items-grid">
+          {reports.map((report) => {
+            const isLost = report.report_type === "lost";
 
-            <p>
-              <strong>Description:</strong> {report.description}
-            </p>
+            return (
+              <div className="my-item-card" key={report.id}>
+                <div className="my-item-card-top">
+                  <span
+                    className={
+                      isLost
+                        ? "item-type-badge lost"
+                        : "item-type-badge found"
+                    }
+                  >
+                    {isLost ? "● Lost Item" : "● Found Item"}
+                  </span>
 
-            <p>
-              <strong>Location:</strong> {report.location}
-            </p>
+                  <span className="item-status-badge">
+                    {report.status}
+                  </span>
+                </div>
 
-            <p>
-              <strong>Date:</strong>{" "}
-              {new Date(report.event_time).toLocaleString()}
-            </p>
+                <h2>{report.item_name}</h2>
 
-            <p>
-              <strong>Status:</strong> {report.status}
-            </p>
-          </div>
-        ))}
-      </div>
+                <div className="my-item-category">
+                  {report.category}
+                </div>
+
+                <p className="my-item-description">
+                  {report.description}
+                </p>
+
+                <div className="my-item-details">
+                  <div className="my-item-detail">
+                    <span className="detail-icon">📍</span>
+                    <div>
+                      <small>Location</small>
+                      <strong>{report.location}</strong>
+                    </div>
+                  </div>
+
+                  <div className="my-item-detail">
+                    <span className="detail-icon">📅</span>
+                    <div>
+                      <small>Date</small>
+                      <strong>
+                        {new Date(report.event_time).toLocaleString()}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="my-item-card-footer">
+                  <span>
+                    {isLost
+                      ? "Waiting for a match"
+                      : "Looking for the owner"}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
